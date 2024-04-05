@@ -1,0 +1,27 @@
+package templates
+
+import "r.tomng.dev/goserve/internal/files"
+
+templ DirectoryView(dirPath string, entries []files.Entry) {
+	<!DOCTYPE html>
+	<html>
+		<head lang="en">
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Goserve Indexing</title>
+		</head>
+		<body>
+			<h1>Indexing - { dirPath }</h1>
+			<main>
+				<ul>
+					for _, entry := range entries {
+						<li><a href="/{ entry.Path }">{ entry.Name }</a></li>
+					}
+				</ul>
+			</main>
+			<footer>
+				<i>Powered by <a href="https://r.tomng.dev/goserve">goserve</a></i>
+			</footer>
+		</body>
+	</html>
+}
