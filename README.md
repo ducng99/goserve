@@ -16,7 +16,7 @@
 
 ---
 
-## Downloads
+## Installation
 
 ### Prebuilt
 Prebuilt binaries can be found for Linux, Windows and MacOS (amd64/arm64/arm) in [Releases](https://github.com/ducng99/goserve/releases/latest)
@@ -26,6 +26,12 @@ If you have go installed, you can also install with the command below.
 
 ```bash
 go install r.tomng.dev/goserve@latest
+```
+
+Or just run it without install
+
+```bash
+go run r.tomng.dev/goserver@latest
 ```
 
 ## Usage
