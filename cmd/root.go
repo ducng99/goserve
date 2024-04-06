@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,11 +32,11 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "goserve [flags] [host:port]",
+	Use:     fmt.Sprintf("goserve [flags] [host:port]\n\nDefault host:port is \"%s:%s\"", serve.DefaultListenHost, serve.DefaultListenPort),
 	Example: "goserve -cd /path/to/dir --https --cert cert.pem --key key.pem localhost:1337",
-	Short: "Starts a web server to serve static files",
-	Long:  "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more.",
-	Run:   serve.HandleCommand,
+	Short:   "Starts a web server to serve static files",
+	Long:    "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more.",
+	Run:     serve.HandleCommand,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
