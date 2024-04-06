@@ -2,15 +2,14 @@ package serve
 
 import (
 	"net"
-	"strings"
 
 	"r.tomng.dev/goserve/internal/logger"
 )
 
 func parseHostPort(hostport string) (string, string) {
-	// Cannot split without a colon
+	// Cannot split without a colon for port
 	// Add a colon to split then use default port
-	if !strings.Contains(hostport, ":") {
+	if !hasPort(hostport) {
 		hostport = hostport + ":"
 	}
 
@@ -31,4 +30,16 @@ func parseHostPort(hostport string) (string, string) {
 	}
 
 	return host, port
+}
+
+func hasPort(hostport string) bool {
+	for i := len(hostport) - 1; i >= 0; i-- {
+		if hostport[i] == ':' {
+			return true
+		} else if hostport[i] < '0' || hostport[i] > '9' {
+			return false
+		}
+	}
+
+	return false
 }

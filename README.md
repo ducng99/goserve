@@ -49,16 +49,19 @@ goserve localhost:1337
 
 You can also provide a host or port only, and it will fill in the default value.
 
-Listen on `0.0.0.0:1337`
-
 ```bash
+# Listen on `0.0.0.0:1337`
 goserve :1337
 ```
 
-Listen on `localhost:8080`
+```bash
+# Listen on `localhost:8080`
+goserve localhost
+```
 
 ```bash
-goserve localhost
+# IPv6 is supported
+goserve "[::0]:9876"
 ```
 
 ### Help
