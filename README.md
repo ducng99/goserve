@@ -1,4 +1,7 @@
-<h3 align="center">goserve</h3>
+# goserve
+
+![goserve](https://github.com/ducng99/goserve/assets/49080794/c401087b-4130-4b52-95ab-324956e8569c)
+
 <!-- I need a gopher here :( -->
 <p align="center">
   <a href="https://github.com/ducng99/goserve/actions/workflows/build.yml">
