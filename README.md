@@ -5,10 +5,10 @@ A tool to serve static files with configurations for HTTPS, CORS and more. Inspi
 ## Downloads
 
 ### Prebuilt
-Prebuilt binaries can be found for Linux, Windows and MacOS - amd64/arm64/arm in [Releases](https://r.tomng.dev/goserve/releases/latest)
+Prebuilt binaries can be found for Linux, Windows and MacOS (amd64/arm64/arm) in [Releases](https://github.com/ducng99/goserve/releases/latest)
 
 ### Go toolchain
-You can also install through go with the command below
+If you have go installed, you can also install with the command below.
 
 ```bash
 go install r.tomng.dev/goserve@latest
@@ -41,7 +41,7 @@ Listen on `0.0.0.0:1337`
 goserve :1337
 ```
 
-Listen on localhost:8080
+Listen on `localhost:8080`
 
 ```bash
 goserve localhost
