@@ -29,6 +29,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -54,13 +55,26 @@ func handleCommand(cmd *cobra.Command, args []string) {
 	port := DefaultListenPort
 
 	if len(args) > 0 {
-		_host, _port, err := net.SplitHostPort(args[0])
-		if err != nil {
-			logger.Fatalf("Invalid address: %v\n", err)
+		hostport := args[0]
+
+		// Cannot split without a colon
+		// Add a colon to split then use default port
+		if !strings.Contains(hostport, ":") {
+			hostport = hostport + ":"
 		}
 
-		host = _host
-		port = _port
+		_host, _port, err := net.SplitHostPort(hostport)
+		if err != nil {
+			logger.Fatalf("Invalid address (%v)\n", err)
+		}
+
+		if _host != "" {
+			host = _host
+		}
+
+		if _port != "" {
+			port = _port
+		}
 	}
 
 	rootDir, err := cmd.Flags().GetString("dir")
