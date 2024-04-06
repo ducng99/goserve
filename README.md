@@ -1,6 +1,17 @@
-# goserve - serves static files
+<h3 align="center">goserve</h3>
+<!-- I need a gopher here :( -->
+<p align="center">
+  <a href="https://github.com/ducng99/goserve/actions/workflows/build.yml">
+    <img src="https://github.com/ducng99/goserve/actions/workflows/build.yml/badge.svg"/>
+  </a>
+  <a href="https://github.com/ducng99/goserve/actions/workflows/test.yml">
+    <img src="https://github.com/ducng99/goserve/actions/workflows/test.yml/badge.svg"/>
+  </a>
+  <br>
+  <strong>goserve</strong> is a tool to serve static files with indexing page, allows configurations for HTTPS, CORS and more.<br>Inspired by PHP Dev server.
+</p>
 
-A tool to serve static files with configurations for HTTPS, CORS and more. Inspired by PHP Dev server.
+---
 
 ## Downloads
 
