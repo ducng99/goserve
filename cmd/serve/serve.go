@@ -155,7 +155,7 @@ func handleDirectory(w http.ResponseWriter, r *http.Request, path string) {
 	}
 
 	// Set some security headers
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; script-src 'none'; style-src 'none'; img-src 'none'; form-action 'none';")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; frame-ancestors 'self'; form-action 'self';")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.Header().Set("X-Frame-Options", "DENY")
 	w.Header().Set("X-XSS-Protection", "1; mode=block")
