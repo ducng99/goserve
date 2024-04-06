@@ -77,6 +77,11 @@ jobs:
         with:
           go-version: "${{ env.GO_VERSION }}"
 
+      - name: Generate templ
+        run: |
+          go install github.com/a-h/templ/cmd/templ@latest
+          templ generate internal/tmpl/templates
+
       - name: Build
         run: GOOS=${{ matrix.configs.goos }} GOARCH=${{ matrix.configs.goarch }} go build -v -o ./dist/goserve_${{ matrix.configs.goos }}_${{ matrix.configs.goarch }}${{ matrix.configs.ext }}
 

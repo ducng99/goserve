@@ -145,13 +145,21 @@ func routeHandler(w http.ResponseWriter, r *http.Request) {
 	case files.PathTypeFile:
 		http.ServeFile(w, r, sanitisedPath)
 	case files.PathTypeDirectory:
-		handleDirectory(w, sanitisedPath)
+		handleDirectory(w, r, sanitisedPath)
 	default:
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}
 }
 
-func handleDirectory(w http.ResponseWriter, path string) {
+func handleDirectory(w http.ResponseWriter, r *http.Request, path string) {
+	relativePath := files.RelativeRoot(RootDir, path)
+
+	entries, err := files.GetEntries(path)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
 	// Set some security headers
 	w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; script-src 'none'; style-src 'none'; img-src 'none'; form-action 'none';")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -160,7 +168,7 @@ func handleDirectory(w http.ResponseWriter, path string) {
 	w.Header().Set("Referrer-Policy", "no-referrer")
 	w.Header().Set("Feature-Policy", "geolocation 'none'; microphone 'none'; camera 'none'; speaker 'none'; vibrate 'none'; payment 'none'; usb 'none';")
 
-	tmpl.RenderDirectoryView(w, RootDir, path)
+	tmpl.RenderDirectoryView(w, r, relativePath, entries)
 }
 
 // Middleware to log connection details

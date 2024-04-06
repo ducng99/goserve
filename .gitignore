@@ -22,3 +22,6 @@ go.work
 
 # air tmp
 tmp/
+
+# templ output files
+internal/tmpl/templates/*.go

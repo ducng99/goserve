@@ -2,14 +2,7 @@ package files
 
 import (
 	"os"
-	"path/filepath"
 )
-
-type Entry struct {
-	Name  string
-	Path  string
-	IsDir bool
-}
 
 type PathType uint8
 
@@ -34,31 +27,15 @@ func GetPathType(path string) (PathType, error) {
 
 // Get a list of files and directories in a directory.
 // Uses [os.ReadDir] internally
-//
-// Path returned is relative to the root directory
-func GetEntries(rootDir, path string) ([]Entry, error) {
-	entries, err := os.ReadDir(path)
+func GetEntries(absPath string) ([]DirEntry, error) {
+	entries, err := os.ReadDir(absPath)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make([]Entry, 0, len(entries))
+	result := make([]DirEntry, 0, len(entries))
 	for _, entry := range entries {
-		fileName := entry.Name()
-		if entry.IsDir() {
-			fileName += "/"
-		}
-
-		filePath, err := filepath.Rel(rootDir, filepath.Join(path, fileName))
-		if err != nil {
-			return nil, err
-		}
-
-		result = append(result, Entry{
-			Name:  fileName,
-			Path:  filePath,
-			IsDir: entry.IsDir(),
-		})
+		result = append(result, DirEntry{entry})
 	}
 
 	return result, nil

@@ -46,3 +46,18 @@ func hasPrefix(prefix, path string) bool {
 
 	return prefix == path[:len(prefix)]
 }
+
+// Gets a path starts with '/' and relative to the actual rootDir
+// Should be used for display only
+func RelativeRoot(rootDir string, path string) string {
+	relativePath, err := filepath.Rel(rootDir, path)
+	if err != nil {
+		return "/"
+	}
+
+	if relativePath == "." {
+		return "/"
+	}
+
+	return "/" + relativePath
+}

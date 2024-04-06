@@ -43,3 +43,8 @@ func Fatalf(format string, v ...any) {
 	Printf(LogError, format, v...)
 	os.Exit(1)
 }
+
+func Panicf(format string, v ...any) {
+	Printf(LogError, format, v...)
+	panic("")
+}
