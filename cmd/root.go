@@ -26,6 +26,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"r.tomng.dev/goserve/cmd/serve"
+	"r.tomng.dev/goserve/internal/logger"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -59,4 +60,6 @@ func init() {
 	rootCmd.MarkFlagsRequiredTogether("cert", "key")
 
 	flags.BoolP("cors", "c", false, "Set CORS headers")
+
+	flags.BoolVar(&logger.LogNoColor, "nocolor", false, "Disable colored log output")
 }

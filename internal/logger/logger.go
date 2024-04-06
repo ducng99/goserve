@@ -26,20 +26,29 @@ var (
 	renderError   = color.Red.Render
 )
 
+var LogNoColor = false
+
 func Printf(logType LogType, format string, v ...any) {
 	rendered := fmt.Sprintf(format, v...)
 
-	switch logType {
-	case LogSuccess:
-		rendered = renderSuccess(rendered)
-	case LogWarning:
-		rendered = renderWarning(rendered)
-	case LogError:
-		rendered = renderError(rendered)
+	if !LogNoColor {
+		switch logType {
+		case LogSuccess:
+			rendered = renderSuccess(rendered)
+		case LogWarning:
+			rendered = renderWarning(rendered)
+		case LogError:
+			rendered = renderError(rendered)
+		}
 	}
 
 	timePrefix := fmt.Sprintf("[%s] ", time.Now().Format("Mon Jan _2 15:04:05 2006"))
-	rendered = renderTime(timePrefix) + rendered
+
+	if !LogNoColor {
+		timePrefix = renderTime(timePrefix)
+	}
+
+	rendered = timePrefix + rendered
 	print(rendered)
 }
 
