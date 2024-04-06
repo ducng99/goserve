@@ -25,31 +25,33 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"r.tomng.dev/goserve/cmd/serve"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "goserve",
 	Short: "Starts a web server to serve static files",
-	Long: "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more",
-	Run: handleCommand,
+	Long:  "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more",
+	Run:   serve.HandleCommand,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute(version string) {
+	rootCmd.Version = version
+
 	err := rootCmd.Execute()
 	if err != nil {
+		println(err.Error())
 		os.Exit(1)
 	}
 }
 
 func init() {
 	flags := rootCmd.Flags()
-	// flags.StringP("host", "h", "0.0.0.0", "Host and port to listen on")
 	flags.StringP("dir", "d", ".", "Directory to serve")
+	flags.Bool("https", false, "Enable HTTPS")
+	flags.String("cert", "", "Path to certificate file")
+	flags.String("key", "", "Path to key file")
 }
-
-

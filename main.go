@@ -24,5 +24,5 @@ package main
 import "r.tomng.dev/goserve/cmd"
 
 func main() {
-	cmd.Execute()
+	cmd.Execute(Version)
 }

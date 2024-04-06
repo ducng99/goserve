@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package cmd
+package serve
 
 import (
 	"context"
@@ -29,7 +29,6 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strings"
 	"syscall"
 	"time"
 
@@ -50,31 +49,12 @@ var RootDir = filepath.Dir(os.Args[0])
 // Default run function for root command.
 //
 // Handles flags and continue to start a server
-func handleCommand(cmd *cobra.Command, args []string) {
+func HandleCommand(cmd *cobra.Command, args []string) {
 	host := DefaultListenHost
 	port := DefaultListenPort
 
 	if len(args) > 0 {
-		hostport := args[0]
-
-		// Cannot split without a colon
-		// Add a colon to split then use default port
-		if !strings.Contains(hostport, ":") {
-			hostport = hostport + ":"
-		}
-
-		_host, _port, err := net.SplitHostPort(hostport)
-		if err != nil {
-			logger.Fatalf("Invalid address (%v)\n", err)
-		}
-
-		if _host != "" {
-			host = _host
-		}
-
-		if _port != "" {
-			port = _port
-		}
+		host, port = parseHostPort(args[0])
 	}
 
 	rootDir, err := cmd.Flags().GetString("dir")
