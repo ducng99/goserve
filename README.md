@@ -1,6 +1,6 @@
 # goserve
 
-![goserve](https://github.com/ducng99/goserve/assets/49080794/c401087b-4130-4b52-95ab-324956e8569c)
+![carbon](https://github.com/ducng99/goserve/assets/49080794/8973ff0c-1b73-4d0d-8d47-792594ca8005)
 
 <!-- I need a gopher here :( -->
 <p align="center">
