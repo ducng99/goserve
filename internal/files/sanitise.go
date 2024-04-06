@@ -3,13 +3,11 @@ package files
 import (
 	"errors"
 	"path/filepath"
-	"runtime"
-	"strings"
 )
 
 var (
 	ErrorSanitiseUnauthorized = errors.New("unauthorized path")
-	ErrorSanitiseNotExists	= errors.New("path does not exist")
+	ErrorSanitiseNotExists    = errors.New("path does not exist")
 )
 
 // Sanitises a path by resolving symlinks and checking if it is within the root directory.
@@ -36,15 +34,6 @@ func SanitisePath(rootDir, path string) (string, error) {
 	}
 
 	return absPath, nil
-}
-
-func hasPrefix(prefix, path string) bool {
-	// Paths in windows are case-insensitive
-	if runtime.GOOS == "windows" {
-		return strings.EqualFold(prefix, path[:len(prefix)])
-	}
-
-	return prefix == path[:len(prefix)]
 }
 
 // Gets a path starts with '/' and relative to the actual rootDir

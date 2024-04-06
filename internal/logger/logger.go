@@ -11,13 +11,16 @@ import (
 type LogType uint8
 
 const (
+	// Prints with default color
 	LogNormal LogType = iota
 	LogSuccess
 	LogWarning
 	LogError
 )
 
+// Terminal color renderers
 var (
+	renderTime    = color.Gray.Render
 	renderSuccess = color.Green.Render
 	renderWarning = color.Yellow.Render
 	renderError   = color.Red.Render
@@ -35,16 +38,12 @@ func Printf(logType LogType, format string, v ...any) {
 		rendered = renderError(rendered)
 	}
 
-	rendered = fmt.Sprintf("[%s] %s", time.Now().Format("Mon Jan _2 15:04:05 2006"), rendered)
-	fmt.Print(rendered)
+	timePrefix := fmt.Sprintf("[%s] ", time.Now().Format("Mon Jan _2 15:04:05 2006"))
+	rendered = renderTime(timePrefix) + rendered
+	print(rendered)
 }
 
 func Fatalf(format string, v ...any) {
 	Printf(LogError, format, v...)
 	os.Exit(1)
-}
-
-func Panicf(format string, v ...any) {
-	Printf(LogError, format, v...)
-	panic("")
 }

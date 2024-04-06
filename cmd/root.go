@@ -30,9 +30,10 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "goserve",
+	Use:   "goserve [flags] [host:port]",
+	Example: "goserve -cd /path/to/dir --https --cert cert.pem --key key.pem localhost:1337",
 	Short: "Starts a web server to serve static files",
-	Long:  "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more",
+	Long:  "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more.",
 	Run:   serve.HandleCommand,
 }
 
@@ -51,7 +52,11 @@ func Execute(version string) {
 func init() {
 	flags := rootCmd.Flags()
 	flags.StringP("dir", "d", ".", "Directory to serve")
+
 	flags.Bool("https", false, "Enable HTTPS")
 	flags.String("cert", "", "Path to certificate file")
 	flags.String("key", "", "Path to key file")
+	rootCmd.MarkFlagsRequiredTogether("cert", "key")
+
+	flags.BoolP("cors", "c", false, "Set CORS headers")
 }
