@@ -3,22 +3,31 @@ package server
 import (
 	"context"
 	"errors"
+	"io/fs"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
 	"r.tomng.dev/goserve/internal/files"
 	"r.tomng.dev/goserve/internal/logger"
 	"r.tomng.dev/goserve/internal/server/middlewares"
+	"r.tomng.dev/goserve/internal/ssl"
 )
+
+var SelfSignedSSLPath = filepath.Join(os.TempDir(), "goserve")
 
 // Starts web server
 func (c *ServerConfig) StartServer() {
 	// Set up routes
 	mux := c.newServeMux()
+
+	// Setup HTTPS if enabled
+	c.SetupSSL()
 
 	// Start server
 	listenAddr := net.JoinHostPort(c.Host, c.Port)
@@ -29,15 +38,29 @@ func (c *ServerConfig) StartServer() {
 	}
 
 	go func() {
-		if err := httpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		var err error
+
+		if c.HttpsEnabled {
+			err = httpServer.ListenAndServeTLS(c.CertPath, c.KeyPath)
+		} else {
+			err = httpServer.ListenAndServe()
+		}
+
+		if !errors.Is(err, http.ErrServerClosed) {
 			logger.Fatalf("HTTP server error: %v\n", err)
 		}
 		logger.Printf(logger.LogNormal, "Interrupted. Shutting down...\n")
 	}()
 
-	serverURL := "http://" + listenAddr
+	protocol := "http"
 
-	logger.Printf(logger.LogNormal, "Started goserve HTTP server (%s)\n", serverURL)
+	if c.HttpsEnabled {
+		protocol = "https"
+	}
+
+	serverURL := protocol + "://" + listenAddr
+
+	logger.Printf(logger.LogNormal, "Started goserve %s server (%s)\n", strings.ToUpper(protocol), serverURL)
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
@@ -98,5 +121,56 @@ func (c *ServerConfig) routeHandlerFunc(w http.ResponseWriter, r *http.Request) 
 		c.directoryHandler(w, r, sanitisedPath)
 	default:
 		http.Error(w, "Path type not handled correctly", http.StatusInternalServerError)
+	}
+}
+
+func (c *ServerConfig) SetupSSL() {
+	if c.HttpsEnabled {
+		if c.CertPath != "" && c.KeyPath != "" {
+			f, err := os.Open(c.CertPath)
+			if err != nil {
+				logger.Fatalf("Cannot read cert file '%s': %v\n", c.CertPath, err)
+			}
+			f.Close()
+
+			f, err = os.Open(c.KeyPath)
+			if err != nil {
+				logger.Fatalf("Cannot read key file at '%s': %v\n", c.KeyPath, err)
+			}
+			f.Close()
+		} else if c.CertPath == "" && c.KeyPath == "" {
+			err := os.MkdirAll(SelfSignedSSLPath, fs.ModeDir|0700)
+			if err != nil {
+				logger.Fatalf("Error creating temp dir for self-signed SSL: %v\n", err)
+			}
+
+			certKey, privKey, fingerprint, err := ssl.NewKeys(365 * 24 * time.Hour)
+			if err != nil {
+				logger.Fatalf("Error generating SSL keys: %v\n", err)
+			}
+
+			certPath := filepath.Join(SelfSignedSSLPath, "cert.crt")
+			f, err := os.Create(certPath)
+			if err != nil {
+				logger.Fatalf("Error creating cert file: %v\n", err)
+			}
+			f.Write(certKey.Bytes())
+			f.Close()
+
+			privKeyPath := filepath.Join(SelfSignedSSLPath, "privatekey.key")
+			f, err = os.OpenFile(privKeyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+			if err != nil {
+				logger.Fatalf("Error creating private key file: %v\n", err)
+			}
+			f.Write(privKey.Bytes())
+			f.Close()
+
+			logger.Printf(logger.LogNormal, "Generated SSL key fingerprint:\n% X\n", fingerprint)
+
+			c.CertPath = certPath
+			c.KeyPath = privKeyPath
+		} else {
+			logger.Fatalf("Both cert and key paths must be provided. Or both must be empty to use a self-signed certificate\n")
+		}
 	}
 }

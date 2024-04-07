@@ -1,6 +1,6 @@
 # goserve
 
-![carbon](https://github.com/ducng99/goserve/assets/49080794/8973ff0c-1b73-4d0d-8d47-792594ca8005)
+![goserve](https://github.com/ducng99/goserve/assets/49080794/8973ff0c-1b73-4d0d-8d47-792594ca8005)
 
 <!-- I need a gopher here :( -->
 <p align="center">
@@ -10,7 +10,7 @@
     <img src="https://github.com/ducng99/goserve/actions/workflows/test.yml/badge.svg"/>
   </a>
   <br>
-  <strong>goserve</strong> is a web server tool to host static files with directory indexing page, allows configurations for HTTPS, CORS and more.<br>Inspired by PHP Dev server.
+  <strong>goserve</strong> is a web server tool to host static files with directory indexing page, with configurable HTTPS, CORS and more.<br>Inspired by PHP Dev server.
 </p>
 
 ---
@@ -44,7 +44,7 @@ goserve
 ```
 
 ### Custom host:port
-Goserve accepts an argument as host:port to listen on.
+goserve accepts an argument as host:port to listen on.
 
 The commands below accepts local connections on port 1337
 
@@ -69,10 +69,31 @@ goserve localhost
 goserve "[::0]:9876"
 ```
 
-### Help
+### HTTPS and certificates
+goserve can start a HTTPS server with your provided certificate and private key, or generate a pair if you don't.
+Generated certificate and key is stored in `[TempDir]/goserve/` directory.
+
+**Note:** If you want to bypass the warning in browsers when accessing self-signed site, it is recommended to use tools like [mkcert](https://github.com/FiloSottile/mkcert) to set up local CA.
+You can then pass its certificate and private key to goserve.
+
+> [!WARNING] 
+> You should not use self-signed certificate in production environment, it should only be used for local development testing.
+> The private key should not be shared.
+
+```bash
+# Starts HTTPS server and use auto-generated self-signed certificate and key
+goserve --https
+```
+
+```bash
+# Starts HTTPS server with provided certificate and key
+goserve --https --sslcert /path/to/cert.crt --sslkey /path/to/priv.key
+```
+
+## Help
 
 Access `--help` anytime for info on flags allowed
 
-### License
+## License
 
 [MIT](./LICENSE)

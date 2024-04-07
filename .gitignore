@@ -7,6 +7,8 @@
 *.dll
 *.so
 *.dylib
+# Default `go build` output
+/goserve
 
 # Test binary, built with `go test -c`
 *.test

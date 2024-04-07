@@ -31,12 +31,30 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		logger.Fatalf("Error getting 'cors' flag: %v\n", err)
 	}
 
+	httpsEnabled, err := cmd.Flags().GetBool("https")
+	if err != nil {
+		logger.Fatalf("Error getting 'https' flag: %v\n", err)
+	}
+
+	sslCert, err := cmd.Flags().GetString("sslcert")
+	if err != nil {
+		logger.Fatalf("Error getting 'sslcert' flag: %v\n", err)
+	}
+
+	sslKey, err := cmd.Flags().GetString("sslkey")
+	if err != nil {
+		logger.Fatalf("Error getting 'sslkey' flag: %v\n", err)
+	}
+
 	// Set up and start server
 	config := server.ServerConfig{
-		Host:        host,
-		Port:        port,
-		RootDir:     rootDir,
-		CorsEnabled: corsEnabled,
+		Host:         host,
+		Port:         port,
+		RootDir:      rootDir,
+		CorsEnabled:  corsEnabled,
+		HttpsEnabled: httpsEnabled,
+		CertPath:     sslCert,
+		KeyPath:      sslKey,
 	}
 
 	config.StartServer()
