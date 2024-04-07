@@ -30,11 +30,11 @@ type KeyPair struct {
 }
 
 const (
-	CertFileName = "cert.crt"
-	KeyFileName  = "privatekey.key"
+	CertFileName = "goserve_cert.crt"
+	KeyFileName  = "goserve_privatekey.key"
 )
 
-// Keys generates a new P256 ECDSA public private key pair for TLS.
+// Generates a new P256 ECDSA public private key pair for TLS.
 // It returns a bytes buffer for the PEM encoded private key and certificate.
 func NewKeys(validFor time.Duration) (*KeyPair, error) {
 	privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
@@ -99,7 +99,10 @@ func pemBlockForKey(key *ecdsa.PrivateKey) *pem.Block {
 	return &pem.Block{Type: "EC PRIVATE KEY", Bytes: b}
 }
 
+// Saves certificate and private key to the given directory.
+// Uses previously generated key pair if they exist.
 func (k *KeyPair) Save(dir string) (string, string, error) {
+	// Files don't exist, create them
 	err := os.MkdirAll(dir, fs.ModeDir|0700)
 	if err != nil {
 		return "", "", fmt.Errorf("Error creating temp dir for self-signed SSL: %v", err)
@@ -122,4 +125,20 @@ func (k *KeyPair) Save(dir string) (string, string, error) {
 	f.Close()
 
 	return certPath, privKeyPath, nil
+}
+
+// Checks if the certificate and private key files already exist in the given directory.
+// Returns their paths and a boolean indicating if they exist.
+func KeysExist(dir string) (string, string, bool) {
+	certPath := filepath.Join(dir, CertFileName)
+	privKeyPath := filepath.Join(dir, KeyFileName)
+
+	// Return cert and key files if they already exists
+	if _, err := os.Stat(certPath); err == nil {
+		if _, err := os.Stat(privKeyPath); err == nil {
+			return certPath, privKeyPath, true
+		}
+	}
+
+	return "", "", false
 }

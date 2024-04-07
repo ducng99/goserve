@@ -90,7 +90,8 @@ func (c *ServerConfig) newServeMux() *http.ServeMux {
 	return mux
 }
 
-// Handler for all requests
+// Handler for all requests.
+// Serves files or display directory index
 func (c *ServerConfig) routeHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	sanitisedPath, err := files.SanitisePath(c.RootDir, r.URL.Path)
 	if err != nil {
@@ -123,6 +124,7 @@ func (c *ServerConfig) routeHandlerFunc(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+// Checks if HTTPS is enabled and sets up SSL keys if necessary
 func (c *ServerConfig) SetupSSL() {
 	if c.HttpsEnabled {
 		if c.CertPath != "" && c.KeyPath != "" {
@@ -138,17 +140,23 @@ func (c *ServerConfig) SetupSSL() {
 			}
 			f.Close()
 		} else if c.CertPath == "" && c.KeyPath == "" {
-			keyPair, err := ssl.NewKeys(365 * 24 * time.Hour)
-			if err != nil {
-				logger.Fatalf("Error generating SSL keys: %v\n", err)
-			}
+			certPath, privKeyPath, exists := ssl.KeysExist(SelfSignedSSLPath)
 
-			certPath, privKeyPath, err := keyPair.Save(SelfSignedSSLPath)
-			if err != nil {
-				logger.Fatalf("%v\n", err)
-			}
+			if exists {
+				logger.Printf(logger.LogNormal, "Using previous self-signed SSL certificate\n")
+			} else {
+				keyPair, err := ssl.NewKeys(365 * 24 * time.Hour)
+				if err != nil {
+					logger.Fatalf("Error generating SSL keys: %v\n", err)
+				}
 
-			logger.Printf(logger.LogNormal, "Generated SSL key fingerprint:\n% X\n", keyPair.Fingerprint)
+				certPath, privKeyPath, err = keyPair.Save(SelfSignedSSLPath)
+				if err != nil {
+					logger.Fatalf("%v\n", err)
+				}
+
+				logger.Printf(logger.LogNormal, "Generated SSL key fingerprint:\n% X\n", keyPair.Fingerprint)
+			}
 
 			c.CertPath = certPath
 			c.KeyPath = privKeyPath
