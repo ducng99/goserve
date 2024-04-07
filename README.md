@@ -5,13 +5,12 @@
 <!-- I need a gopher here :( -->
 <p align="center">
   <a href="https://github.com/ducng99/goserve/actions/workflows/build.yml">
-    <img src="https://github.com/ducng99/goserve/actions/workflows/build.yml/badge.svg"/>
-  </a>
+    <img src="https://github.com/ducng99/goserve/actions/workflows/build.yml/badge.svg"/></a>
   <a href="https://github.com/ducng99/goserve/actions/workflows/test.yml">
     <img src="https://github.com/ducng99/goserve/actions/workflows/test.yml/badge.svg"/>
   </a>
   <br>
-  <strong>goserve</strong> is a tool to serve static files with indexing page, allows configurations for HTTPS, CORS and more.<br>Inspired by PHP Dev server.
+  <strong>goserve</strong> is a web server tool to host static files with directory indexing page, allows configurations for HTTPS, CORS and more.<br>Inspired by PHP Dev server.
 </p>
 
 ---
