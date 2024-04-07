@@ -18,21 +18,11 @@ import (
 // Starts web server
 func (c *ServerConfig) StartServer() {
 	// Set up routes
-	mux := http.NewServeMux()
-
-	routeHandler := http.Handler(http.HandlerFunc(c.routeHandlerFunc))
-
-	if c.CorsEnabled {
-		routeHandler = middlewares.CorsMiddleware(routeHandler)
-	}
-
-	routeHandler = middlewares.LogConnectionMiddleware(routeHandler)
-
-	mux.Handle("/", routeHandler)
-
-	listenAddr := net.JoinHostPort(c.Host, c.Port)
+	mux := c.newServeMux()
 
 	// Start server
+	listenAddr := net.JoinHostPort(c.Host, c.Port)
+
 	httpServer := &http.Server{
 		Addr:    listenAddr,
 		Handler: mux,
@@ -63,17 +53,33 @@ func (c *ServerConfig) StartServer() {
 	logger.Printf(logger.LogNormal, "Server stopped\n")
 }
 
+func (c *ServerConfig) newServeMux() *http.ServeMux {
+	mux := http.NewServeMux()
+
+	routeHandler := http.Handler(http.HandlerFunc(c.routeHandlerFunc))
+
+	if c.CorsEnabled {
+		routeHandler = middlewares.CorsMiddleware(routeHandler)
+	}
+
+	routeHandler = middlewares.LogConnectionMiddleware(routeHandler)
+	mux.Handle("/", routeHandler)
+
+	return mux
+}
+
 // Handler for all requests
 func (c *ServerConfig) routeHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	sanitisedPath, err := files.SanitisePath(c.RootDir, r.URL.Path)
 	if err != nil {
 		switch {
 		case errors.Is(err, files.ErrorSanitiseNotExists):
-			http.Error(w, "File not found", http.StatusNotFound)
+			http.Error(w, "Path not found", http.StatusNotFound)
 		case errors.Is(err, files.ErrorSanitiseUnauthorized):
-			http.Error(w, "Unauthorized path", http.StatusForbidden)
+			http.Error(w, "Not enough permission to read the given path", http.StatusForbidden)
 		default:
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			http.Error(w, "An unknown error occured", http.StatusInternalServerError)
+			logger.Printf(logger.LogError, "%v\n", err)
 		}
 		return
 	}

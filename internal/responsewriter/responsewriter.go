@@ -11,20 +11,23 @@ type WriteReturn struct {
 
 type CustomResponseWriter struct {
 	http.ResponseWriter
-	StatusCode int
-	Returned   *WriteReturn
+	StatusCode        chan int
+	statusCodeWritten bool
+	Returned          *WriteReturn
 }
 
 func (w *CustomResponseWriter) WriteHeader(statusCode int) {
-	if w.StatusCode == 0 {
-		w.StatusCode = statusCode
-		w.ResponseWriter.WriteHeader(statusCode)
+	if !w.statusCodeWritten {
+		w.statusCodeWritten = true
+		w.StatusCode <- statusCode
 	}
+	w.ResponseWriter.WriteHeader(statusCode)
 }
 
 func (w *CustomResponseWriter) Write(b []byte) (int, error) {
-	if w.StatusCode == 0 {
-		w.StatusCode = http.StatusOK
+	if !w.statusCodeWritten {
+		w.statusCodeWritten = true
+		w.StatusCode <- http.StatusOK
 	}
 
 	bytesWritten, err := w.ResponseWriter.Write(b)
