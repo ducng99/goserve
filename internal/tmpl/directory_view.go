@@ -8,7 +8,7 @@ import (
 )
 
 func RenderDirectoryView(w http.ResponseWriter, r *http.Request, relativePath string, entries []files.DirEntry) {
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html;charset=utf-8")
 
 	templComp := templates.DirectoryView(relativePath, entries)
 	if err := templComp.Render(r.Context(), w); err != nil {

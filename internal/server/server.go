@@ -21,6 +21,11 @@ func (c *ServerConfig) StartServer() {
 	mux := http.NewServeMux()
 
 	routeHandlerFunc := middlewares.LogConnectionMiddleware(http.HandlerFunc(c.routeHandler))
+
+	if c.CorsEnabled {
+		routeHandlerFunc = middlewares.CorsMiddleware(routeHandlerFunc)
+	}
+
 	mux.Handle("/", routeHandlerFunc)
 
 	listenAddr := net.JoinHostPort(c.Host, c.Port)

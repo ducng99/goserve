@@ -26,11 +26,17 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 
 	rootDir := getRootDir(cmd)
 
+	corsEnabled, err := cmd.Flags().GetBool("cors")
+	if err != nil {
+		logger.Fatalf("Error getting 'cors' flag: %v\n", err)
+	}
+
 	// Set up and start server
 	config := server.ServerConfig{
-		Host:    host,
-		Port:    port,
-		RootDir: rootDir,
+		Host:        host,
+		Port:        port,
+		RootDir:     rootDir,
+		CorsEnabled: corsEnabled,
 	}
 
 	config.StartServer()
