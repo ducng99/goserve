@@ -50,5 +50,8 @@ jobs:
           go install github.com/a-h/templ/cmd/templ@latest
           templ generate internal/tmpl/templates
 
+      - name: Build
+        run: go build -v
+
       - name: Run test
         run: go test -v ./test/...
