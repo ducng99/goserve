@@ -8,7 +8,6 @@ const (
 	Red Color = iota + 31
 	Green
 	Yellow
-	White Color = 37
 	Gray Color = 90
 )
 
