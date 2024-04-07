@@ -8,20 +8,20 @@ import (
 )
 
 func TestNewKeys(t *testing.T) {
-	cert, key, fingerprint, err := ssl.NewKeys(365 * 24 * time.Hour)
+	keyPair, err := ssl.NewKeys(365 * 24 * time.Hour)
 	if err != nil {
 		t.Fatalf("NewKeys() returned error: %v", err)
 	}
 
-	if cert == nil {
+	if keyPair.Cert == nil {
 		t.Fatalf("NewKeys() returned nil cert")
 	}
 
-	if key == nil {
+	if keyPair.Key == nil {
 		t.Fatalf("NewKeys() returned nil key")
 	}
 
-	if len(fingerprint) != 32 {
-		t.Fatalf("NewKeys() returned fingerprint with length %d, expected 32", len(fingerprint))
+	if len(keyPair.Fingerprint) != 32 {
+		t.Fatalf("NewKeys() returned fingerprint with length %d, expected 32", len(keyPair.Fingerprint))
 	}
 }
