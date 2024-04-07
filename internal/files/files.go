@@ -11,7 +11,8 @@ const (
 	PathTypeDirectory
 )
 
-// Get the type of a path - file or directory
+// Get the type of a path - file or directory.
+// If the path does not exist or inaccessible, an error is returned.
 func GetPathType(path string) (PathType, error) {
 	f, err := os.Stat(path)
 	if err != nil {
@@ -25,7 +26,7 @@ func GetPathType(path string) (PathType, error) {
 	return PathTypeFile, nil
 }
 
-// Get a list of files and directories in a directory.
+// Get a list of files and sub-directories in a directory.
 // Uses [os.ReadDir] internally
 func GetEntries(absPath string) ([]DirEntry, error) {
 	entries, err := os.ReadDir(absPath)

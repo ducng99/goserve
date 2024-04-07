@@ -1,8 +1,8 @@
 package files
 
 import (
+	"fmt"
 	"io/fs"
-	"strconv"
 )
 
 type DirEntry struct {
@@ -19,6 +19,10 @@ func (e DirEntry) Name() string {
 	return fileName
 }
 
+// Gets string representation of the permissions of the entry (e.g. "drwxr-xr-x").
+// If the permissions cannot be determined, "???" is returned.
+//
+// Uses [io/fs.FileMode.String] internally
 func (e DirEntry) Permissions() string {
 	info, err := e.Info()
 	if err != nil {
@@ -28,11 +32,33 @@ func (e DirEntry) Permissions() string {
 	return info.Mode().String()
 }
 
+// Gets the size of the entry in SI format.
+// E.g. "1.2 kB", "3.4 MB", "5.6 GB", etc.
+//
+// If the entry is a directory, an empty string is returned.
 func (e DirEntry) Size() string {
 	info, err := e.Info()
 	if err != nil {
 		return "0"
 	}
 
-	return strconv.FormatInt(info.Size(), 10)
+	if info.IsDir() {
+		return ""
+	}
+
+	// From https://yourbasic.org/golang/formatting-byte-size-to-human-readable-format/
+	numBytes := info.Size()
+
+	const unit = 1000
+	if numBytes < unit {
+		return fmt.Sprintf("%d B", numBytes)
+	}
+
+	div, exp := int64(unit), 0
+	for n := numBytes / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+
+	return fmt.Sprintf("%.1f %cB", float64(numBytes)/float64(div), "kMGTPE"[exp])
 }
