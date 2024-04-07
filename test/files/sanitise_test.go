@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	RootDir = filepath.Join("testdata", "root")
+	RootDir = filepath.Join("..", "testdata", "root")
 )
 
 var (
