@@ -10,7 +10,7 @@ on:
       - "cmd/**/*"
       - "internal/**/*"
       - "test/**/*"
-      - "*.go"
+      - "main.go"
 
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
