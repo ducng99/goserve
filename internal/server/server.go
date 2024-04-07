@@ -17,18 +17,22 @@ import (
 
 // Starts web server
 func (c *ServerConfig) StartServer() {
+	// Set up routes
 	mux := http.NewServeMux()
 
-	routeHandlerFunc := middlewares.LogConnectionMiddleware(http.HandlerFunc(c.routeHandler))
+	routeHandler := http.Handler(http.HandlerFunc(c.routeHandlerFunc))
 
 	if c.CorsEnabled {
-		routeHandlerFunc = middlewares.CorsMiddleware(routeHandlerFunc)
+		routeHandler = middlewares.CorsMiddleware(routeHandler)
 	}
 
-	mux.Handle("/", routeHandlerFunc)
+	routeHandler = middlewares.LogConnectionMiddleware(routeHandler)
+
+	mux.Handle("/", routeHandler)
 
 	listenAddr := net.JoinHostPort(c.Host, c.Port)
 
+	// Start server
 	httpServer := &http.Server{
 		Addr:    listenAddr,
 		Handler: mux,
@@ -60,7 +64,7 @@ func (c *ServerConfig) StartServer() {
 }
 
 // Handler for all requests
-func (c *ServerConfig) routeHandler(w http.ResponseWriter, r *http.Request) {
+func (c *ServerConfig) routeHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	sanitisedPath, err := files.SanitisePath(c.RootDir, r.URL.Path)
 	if err != nil {
 		switch {
