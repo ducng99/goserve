@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"errors"
-	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -139,37 +138,22 @@ func (c *ServerConfig) SetupSSL() {
 			}
 			f.Close()
 		} else if c.CertPath == "" && c.KeyPath == "" {
-			err := os.MkdirAll(SelfSignedSSLPath, fs.ModeDir|0700)
-			if err != nil {
-				logger.Fatalf("Error creating temp dir for self-signed SSL: %v\n", err)
-			}
-
-			certKey, privKey, fingerprint, err := ssl.NewKeys(365 * 24 * time.Hour)
+			keyPair, err := ssl.NewKeys(365 * 24 * time.Hour)
 			if err != nil {
 				logger.Fatalf("Error generating SSL keys: %v\n", err)
 			}
 
-			certPath := filepath.Join(SelfSignedSSLPath, "cert.crt")
-			f, err := os.Create(certPath)
+			certPath, privKeyPath, err := keyPair.Save(SelfSignedSSLPath)
 			if err != nil {
-				logger.Fatalf("Error creating cert file: %v\n", err)
+				logger.Fatalf("%v\n", err)
 			}
-			f.Write(certKey.Bytes())
-			f.Close()
 
-			privKeyPath := filepath.Join(SelfSignedSSLPath, "privatekey.key")
-			f, err = os.OpenFile(privKeyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-			if err != nil {
-				logger.Fatalf("Error creating private key file: %v\n", err)
-			}
-			f.Write(privKey.Bytes())
-			f.Close()
-
-			logger.Printf(logger.LogNormal, "Generated SSL key fingerprint:\n% X\n", fingerprint)
+			logger.Printf(logger.LogNormal, "Generated SSL key fingerprint:\n% X\n", keyPair.Fingerprint)
 
 			c.CertPath = certPath
 			c.KeyPath = privKeyPath
 		} else {
+			// Cobra already handles this but just in case
 			logger.Fatalf("Both cert and key paths must be provided. Or both must be empty to use a self-signed certificate\n")
 		}
 	}

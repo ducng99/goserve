@@ -14,20 +14,33 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"fmt"
+	"io/fs"
 	"math/big"
 	"os"
+	"path/filepath"
 	"time"
 
 	"r.tomng.dev/goserve/internal/logger"
 )
 
+type KeyPair struct {
+	Cert        *bytes.Buffer
+	Key         *bytes.Buffer
+	Fingerprint [32]byte
+}
+
+const (
+	CertFileName = "cert.crt"
+	KeyFileName  = "privatekey.key"
+)
+
 // Keys generates a new P256 ECDSA public private key pair for TLS.
 // It returns a bytes buffer for the PEM encoded private key and certificate.
-func NewKeys(validFor time.Duration) (cert, key *bytes.Buffer, fingerprint [32]byte, err error) {
+func NewKeys(validFor time.Duration) (*KeyPair, error) {
 	privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		logger.Fatalf("failed to generate private key: %v", err)
-		return nil, nil, fingerprint, err
+		return nil, err
 	}
 
 	notBefore := time.Now()
@@ -37,7 +50,7 @@ func NewKeys(validFor time.Duration) (cert, key *bytes.Buffer, fingerprint [32]b
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
 		logger.Fatalf("failed to generate serial number: %v", err)
-		return nil, nil, fingerprint, err
+		return nil, err
 	}
 
 	template := x509.Certificate{
@@ -56,19 +69,25 @@ func NewKeys(validFor time.Duration) (cert, key *bytes.Buffer, fingerprint [32]b
 	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &privKey.PublicKey, privKey)
 	if err != nil {
 		logger.Fatalf("Failed to create certificate: %v", err)
-		return nil, nil, fingerprint, err
+		return nil, err
 	}
 
 	// Encode and write certificate and key to bytes.Buffer
-	cert = bytes.NewBuffer([]byte{})
+	cert := bytes.NewBuffer([]byte{})
 	pem.Encode(cert, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 
-	key = bytes.NewBuffer([]byte{})
+	key := bytes.NewBuffer([]byte{})
 	pem.Encode(key, pemBlockForKey(privKey))
 
-	fingerprint = sha256.Sum256(derBytes)
+	fingerprint := sha256.Sum256(derBytes)
 
-	return cert, key, fingerprint, nil
+	keyPair := &KeyPair{
+		Cert:        cert,
+		Key:         key,
+		Fingerprint: fingerprint,
+	}
+
+	return keyPair, nil
 }
 
 func pemBlockForKey(key *ecdsa.PrivateKey) *pem.Block {
@@ -78,4 +97,29 @@ func pemBlockForKey(key *ecdsa.PrivateKey) *pem.Block {
 		os.Exit(2)
 	}
 	return &pem.Block{Type: "EC PRIVATE KEY", Bytes: b}
+}
+
+func (k *KeyPair) Save(dir string) (string, string, error) {
+	err := os.MkdirAll(dir, fs.ModeDir|0700)
+	if err != nil {
+		return "", "", fmt.Errorf("Error creating temp dir for self-signed SSL: %v", err)
+	}
+
+	certPath := filepath.Join(dir, CertFileName)
+	f, err := os.Create(certPath)
+	if err != nil {
+		return "", "", fmt.Errorf("Error creating cert file: %v", err)
+	}
+	f.Write(k.Cert.Bytes())
+	f.Close()
+
+	privKeyPath := filepath.Join(dir, KeyFileName)
+	f, err = os.OpenFile(privKeyPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return "", "", fmt.Errorf("Error creating private key file: %v", err)
+	}
+	f.Write(k.Key.Bytes())
+	f.Close()
+
+	return certPath, privKeyPath, nil
 }

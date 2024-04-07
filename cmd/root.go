@@ -12,7 +12,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     fmt.Sprintf("goserve [flags] [host:port]\n\nDefault host:port is \"%s:%s\"", serve.DefaultListenHost, serve.DefaultListenPort),
-	Example: "goserve -cd /path/to/dir --https --cert full-cert.crt --key private-key.key localhost:1337",
+	Example: "goserve -cd /path/to/dir --https --sslcert full-cert.crt --sslkey private-key.key localhost:8443",
 	Short:   "Starts a web server to serve static files",
 	Long:    "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more.",
 	Run:     serve.HandleCommand,
@@ -41,5 +41,5 @@ func init() {
 
 	flags.BoolP("cors", "c", false, "Set CORS headers")
 
-	flags.BoolVar(&logger.LogNoColor, "nocolor", false, "Disable colored log output")
+	flags.BoolVar(&logger.LogNoColor, "no-color", false, "Disable colored log output")
 }

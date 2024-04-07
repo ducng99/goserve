@@ -76,7 +76,7 @@ Generated certificate and key is stored in `[TempDir]/goserve/` directory.
 **Note:** If you want to bypass the warning in browsers when accessing self-signed site, it is recommended to use tools like [mkcert](https://github.com/FiloSottile/mkcert) to set up local CA.
 You can then pass its certificate and private key to goserve.
 
-> [!WARNING] 
+> [!WARNING]
 > You should not use self-signed certificate in production environment, it should only be used for local development testing.
 > The private key should not be shared.
 
