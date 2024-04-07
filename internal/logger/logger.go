@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"time"
-
-	"github.com/gookit/color"
 )
 
 type LogType uint8
@@ -14,16 +12,16 @@ const (
 	// Prints with default color
 	LogNormal LogType = iota
 	LogSuccess
-	LogWarning
+	LogWarn
 	LogError
 )
 
 // Terminal color renderers
 var (
-	renderTime    = color.Gray.Render
-	renderSuccess = color.Green.Render
-	renderWarning = color.Yellow.Render
-	renderError   = color.Red.Render
+	renderTime    = Gray.Render
+	renderSuccess = Green.Render
+	renderWarning = Yellow.Render
+	renderError   = Red.Render
 )
 
 var LogNoColor = false
@@ -35,7 +33,7 @@ func Printf(logType LogType, format string, v ...any) {
 		switch logType {
 		case LogSuccess:
 			rendered = renderSuccess(rendered)
-		case LogWarning:
+		case LogWarn:
 			rendered = renderWarning(rendered)
 		case LogError:
 			rendered = renderError(rendered)

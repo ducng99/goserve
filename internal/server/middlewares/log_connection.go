@@ -34,16 +34,14 @@ func LogConnectionMiddleware(next http.Handler) http.Handler {
 		statusCode := <-customWriter.StatusCode
 
 		// Log connection with colors
-		logResultFormat := "%s [%d]: %s %s\n"
-		logResultParams := []interface{}{r.RemoteAddr, statusCode, r.Method, r.URL.Path}
+		logType := logger.LogSuccess
 		switch {
 		case statusCode >= 500:
-			logger.Printf(logger.LogError, logResultFormat, logResultParams...)
+			logType = logger.LogError
 		case statusCode >= 400:
-			logger.Printf(logger.LogWarning, logResultFormat, logResultParams...)
-		default:
-			logger.Printf(logger.LogSuccess, logResultFormat, logResultParams...)
+			logType = logger.LogWarn
 		}
+		logger.Printf(logType, "%s [%d]: %s %s\n", r.RemoteAddr, statusCode, r.Method, r.URL.Path)
 
 		// Wait for the request to finish then continue logging
 		// We can't wait in the middle of a middleware because the request is still being processed
