@@ -7,10 +7,10 @@ import (
 	"r.tomng.dev/goserve/internal/tmpl/templates"
 )
 
-func RenderDirectoryView(w http.ResponseWriter, r *http.Request, relativePath string, entries []files.DirEntry) {
+func RenderDirectoryView(w http.ResponseWriter, r *http.Request, relativePath string, entries []files.DirEntry, nonce string) {
 	w.Header().Set("Content-Type", "text/html;charset=utf-8")
 
-	templComp := templates.DirectoryView(relativePath, entries)
+	templComp := templates.DirectoryView(relativePath, entries, nonce)
 	if err := templComp.Render(r.Context(), w); err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}

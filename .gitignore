@@ -26,4 +26,4 @@ go.work
 tmp/
 
 # templ output files
-# internal/tmpl/templates/*.go
+internal/tmpl/templates/*.go

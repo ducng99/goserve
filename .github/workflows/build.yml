@@ -34,6 +34,11 @@ jobs:
         with:
           go-version: "${{ env.GO_VERSION }}"
 
+      - name: Generate templ
+        run: |
+          go install github.com/a-h/templ/cmd/templ@latest
+          templ generate internal/tmpl/templates
+
       - name: Run test
         run: go test -v ./test/...
 
