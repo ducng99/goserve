@@ -17,6 +17,7 @@ var ErrNonceGeneration = errors.New("failed to generate nonce")
 // Handler for directory requests.
 // Display an indexing page of contents in the directory
 func (c *ServerConfig) directoryHandler(w http.ResponseWriter, r *http.Request, path string) {
+	// Get files in the provided directory
 	relativePath := files.RelativeRoot(c.RootDir, path)
 
 	entries, err := files.GetEntries(path)
@@ -26,6 +27,7 @@ func (c *ServerConfig) directoryHandler(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
+	// Generate nonce for CSP
 	nonce, err := generateNonce()
 	if err != nil {
 		http.Error(w, "Cannot generate nonce for CSP", http.StatusInternalServerError)
@@ -53,9 +55,9 @@ func generateNonce() (string, error) {
 		return "", err
 	}
 
-	if genLength == length {
-		return hex.EncodeToString(nonce), nil
+	if genLength != length {
+		return "", ErrNonceGeneration
 	}
 
-	return "", ErrNonceGeneration
+	return hex.EncodeToString(nonce), nil
 }
