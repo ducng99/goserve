@@ -5,12 +5,12 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./tmp/goserve"
-  pre_cmd = ["templ generate internal/tmpl/templates"]
+  pre_cmd = ["go generate ./..."]
   cmd = "go build -o ./tmp/goserve"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata"]
   exclude_file = []
-  exclude_regex = ["_test\\.go", "templates/[a-zA-Z_]*\\.go"]
+  exclude_regex = ["_test\\.go", "[a-zA-Z_]*_templ\\.go", "[a-zA-Z_]*\\.ignore\\..*"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""

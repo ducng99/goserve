@@ -14,6 +14,7 @@ import (
 
 	"r.tomng.dev/goserve/internal/files"
 	"r.tomng.dev/goserve/internal/logger"
+	"r.tomng.dev/goserve/internal/server/assets"
 	"r.tomng.dev/goserve/internal/server/middlewares"
 	"r.tomng.dev/goserve/internal/ssl"
 )
@@ -86,6 +87,7 @@ func (c *ServerConfig) newServeMux() *http.ServeMux {
 
 	routeHandler = middlewares.LogConnectionMiddleware(routeHandler)
 	mux.Handle("/", routeHandler)
+	mux.HandleFunc(assets.PrefixPath + "{asset}", assets.AssetsHandler)
 
 	return mux
 }

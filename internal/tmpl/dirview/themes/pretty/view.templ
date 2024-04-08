@@ -1,0 +1,103 @@
+package pretty
+
+import (
+	"path/filepath"
+
+	"r.tomng.dev/goserve/internal/files"
+	"r.tomng.dev/goserve/internal/server/assets"
+)
+
+var tailwindCSSPath, err = assets.Asset{Name: "tailwind.css", Type: "text/css", Content: []byte(Tailwind)}.AddAsset()
+
+templ View(dirPath string, entries []files.DirEntry) {
+	<!DOCTYPE html>
+	<html lang="en" class="light">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Indexing - { dirPath }</title>
+			<link rel="stylesheet" href={ string(templ.URL(tailwindCSSPath)) } nonce={ ctx.Value("nonce").(string) }/>
+		</head>
+		<body>
+			<div class="container mx-auto p-4 flex flex-col gap-4">
+				<div class="flex flex-col gap-2">
+					<h1 class="text-3xl font-bold tracking-tight">Indexing - { dirPath }</h1>
+				</div>
+				<div class="border border-gray-200 dark:border-gray-800 rounded-lg">
+					<div class="grid grid-cols-4-1-1 p-4 border-b border-gray-200 dark:border-gray-800 last:border-0">
+						<div class="font-semibold">Name</div>
+						<div class="font-semibold text-end">Size</div>
+						<div class="font-semibold text-end">Permissions</div>
+					</div>
+					<div class="flex flex-col gap-0.5">
+						if dirPath != "/" {
+							<a
+								class="grid grid-cols-4-1-1 p-4 bg-gray-100 dark:bg-gray-800 last:border-b border-gray-200 dark:border-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+								href={ templ.URL(filepath.Dir(dirPath)) }
+							>
+								<div class="flex items-center gap-2">
+									@dirIcon()
+									<span>../</span>
+								</div>
+								<span class="text-end"></span>
+								<span class="text-end"></span>
+							</a>
+						}
+						for _, entry := range entries {
+							<a
+								class="grid grid-cols-4-1-1 p-4 bg-gray-100 dark:bg-gray-800 last:border-b border-gray-200 dark:border-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+								href={ templ.URL(filepath.Join(dirPath, entry.Name(false))) }
+							>
+								<div class="flex items-center gap-2">
+									if entry.IsDir() {
+										@dirIcon()
+									} else {
+										@fileIcon()
+									}
+									<span>{ entry.Name(false) }</span>
+								</div>
+								<span class="text-end">{ entry.Size() }</span>
+								<span class="text-end">{ entry.Permissions() }</span>
+							</a>
+						}
+					</div>
+				</div>
+			</div>
+		</body>
+	</html>
+}
+
+templ fileIcon() {
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		class="w-4 h-4 mr-1.5"
+	>
+		<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+		<polyline points="14 2 14 8 20 8"></polyline>
+	</svg>
+}
+
+templ dirIcon() {
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		class="w-4 h-4 mr-1.5"
+	>
+		<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+	</svg>
+}

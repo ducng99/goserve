@@ -26,4 +26,6 @@ go.work
 tmp/
 
 # templ output files
-internal/tmpl/templates/*.go
+internal/tmpl/**/*_templ.go
+# custom css-to-go output files
+internal/tmpl/**/*.ignore.*

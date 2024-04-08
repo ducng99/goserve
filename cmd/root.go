@@ -32,14 +32,18 @@ func Execute(version string) {
 
 func init() {
 	flags := rootCmd.Flags()
-	flags.StringP("dir", "d", ".", "Directory to serve")
 
+	// Generic server configs
+	flags.StringP("dir", "d", ".", "Directory to serve")
+	flags.BoolP("cors", "c", false, "Set CORS headers")
+	flags.String("index-theme", "pretty", "Directory index page theme. Available themes: basic, pretty")
+
+	// HTTPS
 	flags.Bool("https", false, "Enable HTTPS")
 	flags.String("sslcert", "", "Path to a full certificate file")
 	flags.String("sslkey", "", "Path to a private key file")
 	rootCmd.MarkFlagsRequiredTogether("sslcert", "sslkey")
 
-	flags.BoolP("cors", "c", false, "Set CORS headers")
-
+	// Other
 	flags.BoolVar(&logger.LogNoColor, "no-color", false, "Disable colored log output")
 }

@@ -9,18 +9,18 @@ import (
 
 	"r.tomng.dev/goserve/internal/files"
 	"r.tomng.dev/goserve/internal/logger"
-	"r.tomng.dev/goserve/internal/tmpl"
+	"r.tomng.dev/goserve/internal/tmpl/dirview"
 )
 
 var ErrNonceGeneration = errors.New("failed to generate nonce")
 
 // Handler for directory requests.
 // Display an indexing page of contents in the directory
-func (c *ServerConfig) directoryHandler(w http.ResponseWriter, r *http.Request, path string) {
+func (c *ServerConfig) directoryHandler(w http.ResponseWriter, r *http.Request, dirPath string) {
 	// Get files in the provided directory
-	relativePath := files.RelativeRoot(c.RootDir, path)
+	relativePath := files.RelativeRoot(c.RootDir, dirPath)
 
-	entries, err := files.GetEntries(path)
+	entries, err := files.GetEntries(dirPath)
 	if err != nil {
 		http.Error(w, "Cannot get entries in the provided directory", http.StatusInternalServerError)
 		logger.Printf(logger.LogError, "%v\n", err)
@@ -43,7 +43,7 @@ func (c *ServerConfig) directoryHandler(w http.ResponseWriter, r *http.Request, 
 	w.Header().Set("Referrer-Policy", "no-referrer")
 	w.Header().Set("Permissions-Policy", "accelerometer=(),ambient-light-sensor=(),autoplay=(),battery=(),camera=(),display-capture=(),document-domain=(),encrypted-media=(),fullscreen=(),gamepad=(),geolocation=(),gyroscope=(),magnetometer=(),microphone=(),midi=(),payment=(),picture-in-picture=(),publickey-credentials-get=(),speaker-selection=(),sync-xhr=(self),usb=(),screen-wake-lock=(),web-share=(),xr-spatial-tracking=()")
 
-	tmpl.RenderDirectoryView(w, r, relativePath, entries, nonce)
+	dirview.Render(w, r, relativePath, entries, nonce, c.DirViewTheme)
 }
 
 func generateNonce() (string, error) {

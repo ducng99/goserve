@@ -1,0 +1,3 @@
+package tmpl
+
+//go:generate templ generate ./...

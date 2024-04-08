@@ -1,4 +1,4 @@
-package templates
+package basic
 
 import (
 	"path/filepath"
@@ -6,14 +6,14 @@ import (
 	"r.tomng.dev/goserve/internal/files"
 )
 
-templ DirectoryView(dirPath string, entries []files.DirEntry, nonce string) {
+templ View(dirPath string, entries []files.DirEntry) {
 	<!DOCTYPE html>
-	<html>
-		<head lang="en">
+	<html lang="en">
+		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Indexing - { dirPath }</title>
-			<style nonce={ nonce }>
+			<style type="text/css" nonce={ ctx.Value("nonce").(string) }>
 				td:nth-child(2), td:nth-child(3) {
 					text-align: end;
 				}
@@ -49,7 +49,7 @@ templ DirectoryView(dirPath string, entries []files.DirEntry, nonce string) {
 						}
 						for _, entry := range entries {
 							<tr>
-								<td><a href={ templ.URL(filepath.Join(dirPath, entry.Name())) }>{ entry.Name() }</a></td>
+								<td><a href={ templ.URL(filepath.Join(dirPath, entry.Name(true))) }>{ entry.Name(true) }</a></td>
 								<td>{ entry.Size() }</td>
 								<td>{ entry.Permissions() }</td>
 							</tr>

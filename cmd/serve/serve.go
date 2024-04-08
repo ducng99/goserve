@@ -1,11 +1,14 @@
 package serve
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"r.tomng.dev/goserve/internal/logger"
 	"r.tomng.dev/goserve/internal/server"
+	"r.tomng.dev/goserve/internal/tmpl/dirview/themes"
 )
 
 const (
@@ -31,6 +34,16 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		logger.Fatalf("Error getting 'cors' flag: %v\n", err)
 	}
 
+	dirViewTheme, err := cmd.Flags().GetString("index-theme")
+	if err != nil {
+		logger.Fatalf("Error getting 'index-theme' flag: %v\n", err)
+	}
+	if !themes.Exists(dirViewTheme) {
+		cmd.Help()
+		fmt.Printf("Invalid value for 'index-theme' flag: %s\n", dirViewTheme)
+		os.Exit(1)
+	}
+
 	httpsEnabled, err := cmd.Flags().GetBool("https")
 	if err != nil {
 		logger.Fatalf("Error getting 'https' flag: %v\n", err)
@@ -52,6 +65,7 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		Port:         port,
 		RootDir:      rootDir,
 		CorsEnabled:  corsEnabled,
+		DirViewTheme: dirViewTheme,
 		HttpsEnabled: httpsEnabled,
 		CertPath:     sslCert,
 		KeyPath:      sslKey,

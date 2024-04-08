@@ -3,6 +3,7 @@ package files
 import (
 	"fmt"
 	"io/fs"
+	"slices"
 )
 
 type DirEntry struct {
@@ -10,9 +11,9 @@ type DirEntry struct {
 }
 
 // Gets the name of the entry. If the entry is a directory, a "/" is appended to the name
-func (e DirEntry) Name() string {
+func (e DirEntry) Name(addSlash bool) string {
 	fileName := e.DirEntry.Name()
-	if e.IsDir() {
+	if addSlash && e.IsDir() {
 		fileName += "/"
 	}
 
@@ -61,4 +62,35 @@ func (e DirEntry) Size() string {
 	}
 
 	return fmt.Sprintf("%.1f %cB", float64(numBytes)/float64(div), "kMGTPE"[exp])
+}
+
+// Sorts by directories first, then by name
+func Sort(entries []DirEntry) {
+	sortDir := make([]DirEntry, 0, len(entries))
+	sortFile := make([]DirEntry, 0, len(entries))
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			sortDir = append(sortDir, entry)
+		} else {
+			sortFile = append(sortFile, entry)
+		}
+	}
+
+	sortEntry := func(a, b DirEntry) int {
+		if a.Name(false) < b.Name(false) {
+			return -1
+		}
+
+		if a.Name(false) > b.Name(false) {
+			return 1
+		}
+
+		return 0
+	}
+
+	slices.SortFunc(sortDir, sortEntry)
+	slices.SortFunc(sortFile, sortEntry)
+
+	copy(entries, append(sortDir, sortFile...))
 }
