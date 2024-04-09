@@ -57,7 +57,7 @@ templ View(dirPath string, entries []files.DirEntry) {
 									<span>{ entry.Name(false) }</span>
 								</div>
 								<span class="text-end">{ entry.Size() }</span>
-								<span class="text-end">{ entry.Permissions() }</span>
+								<code class="text-end">{ entry.Permissions() }</code>
 							</a>
 						}
 					</div>
