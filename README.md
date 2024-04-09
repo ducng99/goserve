@@ -27,10 +27,10 @@ If you have go installed, you can also install with the command below.
 go install r.tomng.dev/goserve@latest
 ```
 
-Or just run it without install
+Or just run it without installing
 
 ```bash
-go run r.tomng.dev/goserver@latest
+go run r.tomng.dev/goserve@latest
 ```
 
 ## Usage
@@ -66,7 +66,15 @@ goserve localhost
 
 ```bash
 # IPv6 is supported
-goserve "[::0]:9876"
+goserve "[::0]:1337"
+```
+
+### Different root dir
+
+By default, goserve uses the current directory and serve its files and directories. You can change it using `-d` or `--dir` flag.
+
+```bash
+goserve -d ./web/static/
 ```
 
 ### HTTPS and certificates
@@ -82,17 +90,66 @@ You can then pass its certificate and private key to goserve.
 
 ```bash
 # Starts HTTPS server and use auto-generated self-signed certificate and key
-goserve --https
+goserve -s
 ```
 
 ```bash
 # Starts HTTPS server with provided certificate and key
-goserve --https --sslcert /path/to/cert.crt --sslkey /path/to/priv.key
+goserve -s --sslcert /path/to/cert.crt --sslkey /path/to/priv.key
 ```
+
+### CORS
+
+CORS headers aren't added by default when serving files, you can supply `--cors` flag to add these headers.
+
+```bash
+goserve --cors
+```
+
+Headers:
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: *
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Max-Age: 3600
+```
+
+### Theme
+
+#### Directory index page
+By default, directory index page uses "pretty" theme with TailwindCSS. You can switch to "basic" theme by suppling `--index-theme` flag, which contains just a simple HTML page (with very minimal CSS).
+
+#### Log color
+If you prefer default text color only, `--no-color` flag will disable all colors when logging.
 
 ## Help
 
-Access `--help` anytime for info on flags allowed
+Access `--help` anytime for up-to-date info on flags
+
+```bash
+$ goserve -h
+Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more.
+
+Usage:
+  goserve [flags] [host:port]
+
+Default host:port is "0.0.0.0:8080"
+
+Examples:
+goserve -cd /path/to/dir --https --sslcert full-cert.crt --sslkey private-key.key localhost:8443
+
+Flags:
+  -c, --cors                 Set CORS headers
+  -d, --dir string           Directory to serve (default ".")
+  -h, --help                 help for goserve
+      --https                Alias for --ssl
+      --index-theme string   Directory index page theme. Available themes: basic, pretty (default "pretty")
+      --no-color             Disable colored log output
+  -s, --ssl                  Use HTTPS server
+      --sslcert string       Path to a full certificate file
+      --sslkey string        Path to a private key file
+  -v, --version              version for goserve
+```
 
 ## License
 

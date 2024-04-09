@@ -39,7 +39,8 @@ func init() {
 	flags.String("index-theme", "pretty", "Directory index page theme. Available themes: basic, pretty")
 
 	// HTTPS
-	flags.Bool("https", false, "Enable HTTPS")
+	sslFlag := flags.BoolP("ssl", "s", false, "Use HTTPS server")
+	flags.BoolVar(sslFlag, "https", *sslFlag, "Alias for --ssl")
 	flags.String("sslcert", "", "Path to a full certificate file")
 	flags.String("sslkey", "", "Path to a private key file")
 	rootCmd.MarkFlagsRequiredTogether("sslcert", "sslkey")
