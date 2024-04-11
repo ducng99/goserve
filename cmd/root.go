@@ -12,7 +12,11 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     fmt.Sprintf("goserve [flags] [host:port]\n\nDefault host:port is \"%s:%s\"", serve.DefaultListenHost, serve.DefaultListenPort),
-	Example: "goserve -cd /path/to/dir --https --sslcert full-cert.crt --sslkey private-key.key localhost:8443",
+	Example: `Start server with HTTPS on port 8443:
+goserve -cd /path/to/dir --https --sslcert full-cert.crt --sslkey private-key.key localhost:8443
+
+Proxy to another server on port 8080, and listen on port 8081:
+goserve -p http://localhost:8080 localhost:8081`,
 	Short:   "Starts a web server to serve static files",
 	Long:    "Starts a web server to serve static files, with options for HTTPS, directory, CORS, and more.",
 	Run:     serve.HandleCommand,
@@ -36,7 +40,7 @@ func init() {
 	// Generic server configs
 	flags.StringP("dir", "d", ".", "Directory to serve")
 	flags.BoolP("cors", "c", false, "Set CORS headers")
-	flags.String("index-theme", "pretty", "Directory index page theme. Available themes: basic, pretty")
+	flags.String("index-theme", "pretty", "Directory index page theme.\nAvailable themes: basic, pretty")
 
 	// HTTPS
 	sslFlag := flags.BoolP("ssl", "s", false, "Use HTTPS server")
@@ -45,6 +49,11 @@ func init() {
 	flags.String("sslkey", "", "Path to a private key file")
 	rootCmd.MarkFlagsRequiredTogether("sslcert", "sslkey")
 
+	// Proxy
+	flags.StringP("proxy", "p", "", "Proxy forward to the specified URL.\nThis will disable directory listing and file serving.")
+	flags.Bool("proxy-headers", true, "Include X-Forwarded-For and X-Forwarded-Proto headers in proxy request")
+	flags.Bool("proxy-ignore-redirect", false, "Ignore redirects from the target server")
+
 	// Other
-	flags.BoolVar(&logger.LogNoColor, "no-color", false, "Disable colored log output")
+	flags.BoolVar(&logger.LogWithColor, "log-color", true, "Disable colored log output")
 }

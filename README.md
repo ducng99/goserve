@@ -114,13 +114,34 @@ Access-Control-Allow-Headers: Content-Type, Authorization
 Access-Control-Max-Age: 3600
 ```
 
+### Proxy
+
+Instead of serving your local files and showing directory listing, goserve can act as a reverse proxy server and forward requests to a target URL.
+This is useful if you want to use goserve HTTPS on top of your HTTP web server.
+
+Use `-p` or `--proxy` with the target URL you want to forward to.
+
+```bash
+# Listen on port 9999 and forward requests to http://pi.local
+goserve -p http://pi.local/ :9999
+```
+
+#### Client IP forwarding
+If `--proxy-headers` flag is set, goserve includes `X-Forwarded-For` and `X-Forwarded-Proto` headers, setting client's IP and the original protocol used, respectively.
+
+#### Redirect response
+Sometimes target server can return a redirect through `Location` header.
+goserve can strips out this header if `--proxy-ignore-redirect` flag is specified.
+
+The original `Location` header value can be found in `X-Original-Location` header.
+
 ### Theme
 
 #### Directory index page
 By default, directory index page uses "pretty" theme with TailwindCSS. You can switch to "basic" theme by suppling `--index-theme` flag, which contains just a simple HTML page (with very minimal CSS).
 
 #### Log color
-If you prefer default text color only, `--no-color` flag will disable all colors when logging.
+If you prefer default text color only for logs, setting `--log-color=false` flag will disable all colors when logging.
 
 ## Help
 
@@ -136,19 +157,28 @@ Usage:
 Default host:port is "0.0.0.0:8080"
 
 Examples:
+Start server with HTTPS on port 8443:
 goserve -cd /path/to/dir --https --sslcert full-cert.crt --sslkey private-key.key localhost:8443
 
+Proxy to another server on port 8080, and listen on port 8081:
+goserve -p http://localhost:8080 localhost:8081
+
 Flags:
-  -c, --cors                 Set CORS headers
-  -d, --dir string           Directory to serve (default ".")
-  -h, --help                 help for goserve
-      --https                Alias for --ssl
-      --index-theme string   Directory index page theme. Available themes: basic, pretty (default "pretty")
-      --no-color             Disable colored log output
-  -s, --ssl                  Use HTTPS server
-      --sslcert string       Path to a full certificate file
-      --sslkey string        Path to a private key file
-  -v, --version              version for goserve
+  -c, --cors                    Set CORS headers
+  -d, --dir string              Directory to serve (default ".")
+  -h, --help                    help for goserve
+      --https                   Alias for --ssl
+      --index-theme string      Directory index page theme.
+                                Available themes: basic, pretty (default "pretty")
+      --log-color               Disable colored log output (default true)
+  -p, --proxy string            Proxy forward to the specified URL.
+                                This will disable directory listing and file serving.
+      --proxy-headers           Include X-Forwarded-For and X-Forwarded-Proto headers in proxy request (default true)
+      --proxy-ignore-redirect   Ignore redirects from the target server
+  -s, --ssl                     Use HTTPS server
+      --sslcert string          Path to a full certificate file
+      --sslkey string           Path to a private key file
+  -v, --version                 version for goserve
 ```
 
 ## License

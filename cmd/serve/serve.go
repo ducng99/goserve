@@ -59,16 +59,34 @@ func HandleCommand(cmd *cobra.Command, args []string) {
 		logger.Fatalf("Error getting 'sslkey' flag: %v\n", err)
 	}
 
+	proxyToAddr, err := cmd.Flags().GetString("proxy")
+	if err != nil {
+		logger.Fatalf("Error getting 'proxy' flag: %v\n", err)
+	}
+
+	proxyHeadersEnabled, err := cmd.Flags().GetBool("proxy-headers")
+	if err != nil {
+		logger.Fatalf("Error getting 'proxy-headers' flag: %v\n", err)
+	}
+
+	proxyIgnoreRedirect, err := cmd.Flags().GetBool("proxy-ignore-redirect")
+	if err != nil {
+		logger.Fatalf("Error getting 'proxy-ignore-redirect' flag: %v\n", err)
+	}
+
 	// Set up and start server
 	config := server.ServerConfig{
-		Host:         host,
-		Port:         port,
-		RootDir:      rootDir,
-		CorsEnabled:  corsEnabled,
-		DirViewTheme: dirViewTheme,
-		HttpsEnabled: httpsEnabled,
-		CertPath:     sslCert,
-		KeyPath:      sslKey,
+		Host:                host,
+		Port:                port,
+		RootDir:             rootDir,
+		CorsEnabled:         corsEnabled,
+		DirViewTheme:        dirViewTheme,
+		HttpsEnabled:        httpsEnabled,
+		CertPath:            sslCert,
+		KeyPath:             sslKey,
+		ProxyToAddr:         proxyToAddr,
+		ProxyHeadersEnabled: proxyHeadersEnabled,
+		ProxyIgnoreRedirect: proxyIgnoreRedirect,
 	}
 
 	config.StartServer()

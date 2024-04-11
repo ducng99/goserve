@@ -14,6 +14,7 @@ import (
 
 	"r.tomng.dev/goserve/internal/files"
 	"r.tomng.dev/goserve/internal/logger"
+	"r.tomng.dev/goserve/internal/proxy"
 	"r.tomng.dev/goserve/internal/server/assets"
 	"r.tomng.dev/goserve/internal/server/middlewares"
 	"r.tomng.dev/goserve/internal/ssl"
@@ -78,8 +79,18 @@ func (c *ServerConfig) StartServer() {
 
 func (c *ServerConfig) newServeMux() *http.ServeMux {
 	mux := http.NewServeMux()
+	var routeHandler http.Handler
 
-	routeHandler := http.Handler(http.HandlerFunc(c.routeHandlerFunc))
+	if c.ProxyToAddr != "" {
+		proxyHandler, err := proxy.New(c.ProxyToAddr, c.ProxyHeadersEnabled, c.ProxyIgnoreRedirect)
+		if err != nil {
+			logger.Fatalf("Error creating reverse proxy handler: %v\n", err)
+		}
+
+		routeHandler = proxyHandler
+	} else {
+		routeHandler = http.Handler(http.HandlerFunc(c.routeHandlerFunc))
+	}
 
 	if c.CorsEnabled {
 		routeHandler = middlewares.CorsMiddleware(routeHandler)
@@ -87,7 +98,7 @@ func (c *ServerConfig) newServeMux() *http.ServeMux {
 
 	routeHandler = middlewares.LogConnectionMiddleware(routeHandler)
 	mux.Handle("/", routeHandler)
-	mux.HandleFunc(assets.PrefixPath + "{asset}", assets.AssetsHandler)
+	mux.HandleFunc(assets.PrefixPath+"{asset}", assets.AssetsHandler)
 
 	return mux
 }

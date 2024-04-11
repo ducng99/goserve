@@ -24,12 +24,12 @@ var (
 	renderError   = Red.Render
 )
 
-var LogNoColor = false
+var LogWithColor = true
 
 func Printf(logType LogType, format string, v ...any) {
 	rendered := fmt.Sprintf(format, v...)
 
-	if !LogNoColor {
+	if LogWithColor {
 		switch logType {
 		case LogSuccess:
 			rendered = renderSuccess(rendered)
@@ -42,7 +42,7 @@ func Printf(logType LogType, format string, v ...any) {
 
 	timePrefix := fmt.Sprintf("[%s] ", time.Now().Format("Mon Jan _2 15:04:05 2006"))
 
-	if !LogNoColor {
+	if LogWithColor {
 		timePrefix = renderTime(timePrefix)
 	}
 
