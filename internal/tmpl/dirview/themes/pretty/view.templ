@@ -31,40 +31,34 @@ templ View(dirPath string, entries []files.DirEntry) {
 					</div>
 					<div class="flex flex-col gap-0.5">
 						if dirPath != "/" {
-							<a
-								class="grid grid-cols-4-1-1 p-4 bg-gray-100 dark:bg-gray-800 last:border-b border-gray-200 dark:border-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-								href={ templ.URL(filepath.Dir(dirPath)) }
-							>
-								<div class="flex items-center gap-2">
-									@dirIcon()
-									<span>../</span>
-								</div>
-								<span class="text-end"></span>
-								<span class="text-end"></span>
-							</a>
+							@entryLink(filepath.Dir(dirPath), "../", "", "", true)
 						}
 						for _, entry := range entries {
-							<a
-								class="grid grid-cols-4-1-1 p-4 bg-gray-100 dark:bg-gray-800 last:border-b border-gray-200 dark:border-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-								href={ templ.URL(filepath.Join(dirPath, entry.Name(false))) }
-							>
-								<div class="flex items-center gap-2">
-									if entry.IsDir() {
-										@dirIcon()
-									} else {
-										@fileIcon()
-									}
-									<span>{ entry.Name(false) }</span>
-								</div>
-								<span class="text-end">{ entry.Size() }</span>
-								<code class="text-end">{ entry.Permissions() }</code>
-							</a>
+							@entryLink(filepath.Join(dirPath, entry.Name(false)), entry.Name(false), entry.Size(), entry.Permissions(), entry.IsDir())
 						}
 					</div>
 				</div>
 			</div>
 		</body>
 	</html>
+}
+
+templ entryLink(url, name, size, permissions string, isDir bool) {
+	<a
+		class="grid grid-cols-4-1-1 p-4 bg-gray-100 dark:bg-gray-800 last:border-b border-gray-200 dark:border-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+		href={ templ.URL(url) }
+	>
+		<div class="flex items-center gap-2">
+			if isDir {
+				@dirIcon()
+			} else {
+				@fileIcon()
+			}
+			<span>{ name }</span>
+		</div>
+		<span class="text-end">{ size }</span>
+		<code class="text-end">{ permissions }</code>
+	</a>
 }
 
 templ fileIcon() {
