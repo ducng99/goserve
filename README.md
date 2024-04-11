@@ -10,7 +10,7 @@
     <img src="https://github.com/ducng99/goserve/actions/workflows/test.yml/badge.svg"/>
   </a>
   <br>
-  <strong>goserve</strong> is a web server tool to host static files with directory indexing page, with configurable HTTPS, CORS and more.<br>Inspired by PHP Dev server.
+  <strong>goserve</strong> is a quick tool to spin up a HTTP(S) server to host static files with directory indexing page, with configurable HTTPS, CORS and more.<br>Inspired by PHP Dev server.
 </p>
 
 ---
@@ -33,7 +33,7 @@ Or just run it without installing
 go run r.tomng.dev/goserve@latest
 ```
 
-## Usage
+## Usage & examples
 
 ### Default
 To start serving the current directory, you can run without providing any arguments.
@@ -106,7 +106,7 @@ CORS headers aren't added by default when serving files, you can supply `--cors`
 goserve --cors
 ```
 
-Headers:
+[Headers](./internal/server/middlewares/cors.go):
 ```
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Methods: *
