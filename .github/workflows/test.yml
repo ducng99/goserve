@@ -16,7 +16,7 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 env:
-  GO_VERSION: "1.22.x"
+  GO_VERSION: "1.25.x"
 
 jobs:
   test:
@@ -28,9 +28,8 @@ jobs:
           - ubuntu-22.04
           - windows-2019
           - windows-2022
-          - macos-12
-          - macos-13
           - macos-14
+          - macos-15
 
     runs-on: ${{ matrix.os }}
 
