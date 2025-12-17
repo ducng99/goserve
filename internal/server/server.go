@@ -25,7 +25,7 @@ var SelfSignedSSLPath = filepath.Join(os.TempDir(), "goserve")
 // Starts web server
 func (c *ServerConfig) StartServer() {
 	// Set up routes
-	mux := c.newServeMux()
+	mux := c.NewServeMux()
 
 	// Setup HTTPS if enabled
 	c.SetupSSL()
@@ -77,7 +77,8 @@ func (c *ServerConfig) StartServer() {
 	logger.Printf(logger.LogNormal, "Server stopped\n")
 }
 
-func (c *ServerConfig) newServeMux() *http.ServeMux {
+// NewServeMux creates a new HTTP ServeMux with configured routes
+func (c *ServerConfig) NewServeMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	var routeHandler http.Handler
 
