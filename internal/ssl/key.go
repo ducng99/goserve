@@ -20,7 +20,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"r.tomng.dev/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/logger"
 )
 
 type KeyPair struct {

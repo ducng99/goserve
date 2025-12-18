@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "r.tomng.dev/goserve/cmd"
+import "github.com/ducng99/goserve/cmd"
 
 func main() {
 	cmd.Execute(Version)

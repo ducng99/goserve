@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"r.tomng.dev/goserve/internal/files"
-	"r.tomng.dev/goserve/internal/logger"
-	"r.tomng.dev/goserve/internal/tmpl/dirview/themes"
-	"r.tomng.dev/goserve/internal/tmpl/dirview/themes/basic"
-	"r.tomng.dev/goserve/internal/tmpl/dirview/themes/pretty"
+	"github.com/ducng99/goserve/internal/files"
+	"github.com/ducng99/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/tmpl/dirview/themes"
+	"github.com/ducng99/goserve/internal/tmpl/dirview/themes/basic"
+	"github.com/ducng99/goserve/internal/tmpl/dirview/themes/pretty"
 )
 
 func Render(w http.ResponseWriter, r *http.Request, relativePath string, entries []files.DirEntry, nonce string, theme string) {

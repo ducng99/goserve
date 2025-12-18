@@ -24,13 +24,13 @@ Prebuilt binaries can be found for Linux, Windows and MacOS (amd64/arm64/arm) in
 If you have go installed, you can also install with the command below.
 
 ```bash
-go install r.tomng.dev/goserve@latest
+go install github.com/ducng99/goserve@latest
 ```
 
 Or just run it without installing
 
 ```bash
-go run r.tomng.dev/goserve@latest
+go run github.com/ducng99/goserve@latest
 ```
 
 ## Usage & examples

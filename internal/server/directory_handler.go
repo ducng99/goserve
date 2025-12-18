@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"r.tomng.dev/goserve/internal/files"
-	"r.tomng.dev/goserve/internal/logger"
-	"r.tomng.dev/goserve/internal/tmpl/dirview"
+	"github.com/ducng99/goserve/internal/files"
+	"github.com/ducng99/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/tmpl/dirview"
 )
 
 var ErrNonceGeneration = errors.New("failed to generate nonce")

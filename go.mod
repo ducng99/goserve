@@ -1,4 +1,4 @@
-module r.tomng.dev/goserve
+module github.com/ducng99/goserve
 
 go 1.25
 

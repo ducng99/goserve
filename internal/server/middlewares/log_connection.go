@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"r.tomng.dev/goserve/internal/logger"
-	"r.tomng.dev/goserve/internal/responsewriter"
+	"github.com/ducng99/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/responsewriter"
 )
 
 // Middleware to log connection details

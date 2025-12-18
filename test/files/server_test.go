@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"r.tomng.dev/goserve/internal/files"
-	"r.tomng.dev/goserve/internal/server"
+	"github.com/ducng99/goserve/internal/files"
+	"github.com/ducng99/goserve/internal/server"
 )
 
 func createTestServer(t *testing.T, rootDir string) *httptest.Server {

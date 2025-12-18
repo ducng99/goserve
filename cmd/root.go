@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"r.tomng.dev/goserve/cmd/serve"
-	"r.tomng.dev/goserve/internal/logger"
+	"github.com/ducng99/goserve/cmd/serve"
+	"github.com/ducng99/goserve/internal/logger"
 )
 
 // rootCmd represents the base command when called without any subcommands

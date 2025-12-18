@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"r.tomng.dev/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/logger"
 )
 
 // Creates a new reverse proxy handler to the target URL.

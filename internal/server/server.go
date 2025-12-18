@@ -12,12 +12,12 @@ import (
 	"syscall"
 	"time"
 
-	"r.tomng.dev/goserve/internal/files"
-	"r.tomng.dev/goserve/internal/logger"
-	"r.tomng.dev/goserve/internal/proxy"
-	"r.tomng.dev/goserve/internal/server/assets"
-	"r.tomng.dev/goserve/internal/server/middlewares"
-	"r.tomng.dev/goserve/internal/ssl"
+	"github.com/ducng99/goserve/internal/files"
+	"github.com/ducng99/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/proxy"
+	"github.com/ducng99/goserve/internal/server/assets"
+	"github.com/ducng99/goserve/internal/server/middlewares"
+	"github.com/ducng99/goserve/internal/ssl"
 )
 
 var SelfSignedSSLPath = filepath.Join(os.TempDir(), "goserve")

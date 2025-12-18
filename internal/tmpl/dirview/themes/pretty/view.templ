@@ -3,8 +3,8 @@ package pretty
 import (
 	"path/filepath"
 
-	"r.tomng.dev/goserve/internal/files"
-	"r.tomng.dev/goserve/internal/server/assets"
+	"github.com/ducng99/goserve/internal/files"
+	"github.com/ducng99/goserve/internal/server/assets"
 )
 
 var tailwindCSSPath, err = assets.Asset{Name: "tailwind.css", Type: "text/css", Content: []byte(Tailwind)}.AddAsset()

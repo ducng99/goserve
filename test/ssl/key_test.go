@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"r.tomng.dev/goserve/internal/ssl"
+	"github.com/ducng99/goserve/internal/ssl"
 )
 
 func TestNewKeys(t *testing.T) {

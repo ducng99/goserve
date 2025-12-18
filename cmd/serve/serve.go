@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"r.tomng.dev/goserve/internal/logger"
-	"r.tomng.dev/goserve/internal/server"
-	"r.tomng.dev/goserve/internal/tmpl/dirview/themes"
+	"github.com/ducng99/goserve/internal/logger"
+	"github.com/ducng99/goserve/internal/server"
+	"github.com/ducng99/goserve/internal/tmpl/dirview/themes"
 )
 
 const (
