@@ -66,7 +66,7 @@ jobs:
           GOOS=${{ matrix.configs.goos }} GOARCH=${{ matrix.configs.goarch }} go build -v -o ./dist/goserve_${{ matrix.configs.goos }}_${{ matrix.configs.goarch }}${{ matrix.configs.ext }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: goserve_${{ matrix.configs.goos }}_${{ matrix.configs.goarch }}
           path: ./dist/goserve_*
